@@ -614,5 +614,64 @@ cat age.agekey | kubectl create secret generic sops-age \
 
 ---
 
+## Release checklist (tawala-api)
+
+Normal backend releases are **automated**. You do not run `kubectl apply` or hand-edit the image tag.
+
+### What runs automatically
+
+1. CI builds and pushes `ghcr.io/nethub-ltd/tawala-api:<semver>` (TawalaKE repo).
+2. Flux ImageRepository scans GHCR.
+3. ImagePolicy elects the newest tag in range (`>=0.0.0 <0.1.0` for the 0.0.x channel).
+4. ImageUpdateAutomation commits the new tag on `main` (fluxcdbot).
+5. Kustomization `apps` applies the change and rolls the Deployment.
+
+### After each backend release (optional verify — ~2 minutes)
+
+```bash
+# 1. Confirm the tag exists on GHCR (CI green)
+
+# 2. Wait 5–10 minutes, or force:
+flux reconcile image update flux-system
+flux reconcile kustomization apps
+
+# 3. Confirm cluster image
+kubectl -n nethub get deploy tawala-backend \
+  -o jsonpath='{.spec.template.spec.containers[0].image}{"\n"}'
+
+# 4. Pods healthy?
+kubectl -n nethub get pods -l app=tawala-backend
+```
+
+Expect the new tag (e.g. `ghcr.io/nethub-ltd/tawala-api:0.0.41`) and Ready pods.
+
+### If the image did not move
+
+```bash
+kubectl get imagepolicy tawala-api -n flux-system
+kubectl describe imageupdateautomation flux-system -n flux-system
+flux get kustomizations
+```
+
+Common causes: tag outside the policy range, GHCR credentials, git push blocked for fluxcdbot, or `apps` Kustomization not Ready.
+
+### One-time / rare checks (only when the pipeline changes)
+
+- [ ] CI still publishes semver tags to `ghcr.io/nethub-ltd/tawala-api`
+- [ ] ImagePolicy range matches the active channel (widen it when you move to `0.1.x`)
+- [ ] `ghcr-credentials` in `flux-system` can read packages
+- [ ] `ghcr-registry-key` in `nethub` can pull images
+- [ ] Flux git identity can push to `main`
+- [ ] Deployment marker present: `# {"$imagepolicy": "flux-system:tawala-api"}`
+- [ ] Commit template uses `.Changed.Changes` (not `.Changed.Images` / `.Updated`)
+
+### Durable rules
+
+- Prefer semver tags in the active channel; update the policy before opening a new minor line.
+- Let fluxcdbot own the image line on `main` for normal releases.
+- Add alerts later on ImageRepository / ImageUpdateAutomation / `apps` not Ready so you only look when something fails.
+
+---
+
 **Questions / improvements?**  
 Open an issue or PR in this repository.
