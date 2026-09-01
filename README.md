@@ -332,7 +332,8 @@ spec:
         email: fluxcdbot@users.noreply.github.com
         name: fluxcdbot
       messageTemplate: |
-        chore(images): update {{range .Changed.Images}}{{.}} {{end}}
+        chore(images): {{range .Changed.Changes}}{{.OldValue}} -> {{.NewValue}}
+        {{end}}
     push:
       branch: main
   update:
@@ -412,7 +413,8 @@ spec:
         email: fluxcdbot@users.noreply.github.com
         name: fluxcdbot
       messageTemplate: |
-        chore(images): update {{range .Changed.Images}}{{.}} {{end}}
+        chore(images): {{range .Changed.Changes}}{{.OldValue}} -> {{.NewValue}}
+        {{end}}
     push:
       branch: main
   update:
