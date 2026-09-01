@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tawala-ingress
+  namespace: nethub
+  labels:
+    app.kubernetes.io/name: tawala-backend
+  annotations:
+    kubernetes.io/ingress.className: traefik
+    traefik.ingress.kubernetes.io/service.passhostheader: "true"
+    traefik.ingress.kubernetes.io/custom-response-headers: "Cache-Control: public, max-age=31536000"
+spec:
+  rules:
+    - host: tawala-backend.nethub.co.ke
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: tawala-service
+                port:
+                  number: 80

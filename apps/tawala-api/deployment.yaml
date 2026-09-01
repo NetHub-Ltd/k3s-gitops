@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tawala-backend
+  namespace: nethub
+  labels:
+    app: tawala-backend
+    app.kubernetes.io/name: tawala-backend
+    app.kubernetes.io/part-of: tawala
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tawala-backend
+  template:
+    metadata:
+      labels:
+        app: tawala-backend
+        app.kubernetes.io/name: tawala-backend
+    spec:
+      imagePullSecrets:
+        - name: ghcr-registry-key
+      containers:
+        - name: api
+          image: ghcr.io/nethub-ltd/tawala-api:0.0.39  # {"$imagepolicy": "flux-system:tawala-api"}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8000
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "512Mi"
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+          envFrom:
+            - secretRef:
+                name: tawala-secrets
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 60
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 30
