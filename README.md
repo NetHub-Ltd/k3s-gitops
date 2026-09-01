@@ -239,23 +239,124 @@ sops --decrypt apps/my-service/secret.enc.yaml
 
 Goal: when a new image is pushed to GHCR, Flux automatically updates the tag in this repo and deploys it.
 
+This pattern is **per app** (ImageRepository + ImagePolicy each) with **one shared** ImageUpdateAutomation and **one shared** `ghcr-credentials` secret.
+
+### Versioning contract (all service repos)
+
+| Item | Convention |
+|------|------------|
+| Git tag | `vMAJOR.MINOR.PATCH` |
+| Image tag | `MAJOR.MINOR.PATCH` (no `v` prefix) |
+| Active channel | One deployable semver band per image |
+| Policy range | **Always bounded** — never unbounded `>=0.0.1` if older lines remain in GHCR |
+
+**Range rules**
+
+| Active line | Example range |
+|-------------|----------------|
+| `0.0.x` | `>=0.0.0 <0.1.0` |
+| `0.1.x` | `>=0.1.0 <0.2.0` |
+| `1.x` | `>=1.0.0 <2.0.0` |
+
+When you cut a new minor/major: publish tags **and** update that app’s ImagePolicy range in the same change window.
+
 ### 5.1 Mark the image in the Deployment
 
-In `deployment.yaml`:
+In `apps/<app>/deployment.yaml`:
 
 ```yaml
 image: ghcr.io/nethub-ltd/my-service:0.1.0  # {"$imagepolicy": "flux-system:my-service"}
 ```
 
-The comment is a **marker**. Flux Image Automation looks for it.
+The comment is a **marker**. The name after `flux-system:` must match the ImagePolicy resource name.
 
 ### 5.2 Create ImageRepository + ImagePolicy
 
-Add these files (or put them under `clusters/k3s/` / a dedicated folder):
-
-**`clusters/k3s/image-my-service.yaml`** (example)
+**`clusters/k3s/image-my-service.yaml`**
 
 ```yaml
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageRepository
+metadata:
+  name: my-service
+  namespace: flux-system
+spec:
+  image: ghcr.io/nethub-ltd/my-service
+  interval: 5m
+  secretRef:
+    name: ghcr-credentials
+  exclusionList:
+    - "^.*\\.sig$"
+    - "^main$"
+    - "^latest$"
+
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImagePolicy
+metadata:
+  name: my-service
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: my-service
+  policy:
+    semver:
+      # Bound the active channel (adjust when you release a new minor/major)
+      range: ">=0.1.0 <0.2.0"
+```
+
+Add the file to `clusters/k3s/kustomization.yaml` `resources:`.
+
+### 5.3 Shared update automation
+
+`clusters/k3s/image-automation.yaml` (already present) updates all markers under `./apps`:
+
+```yaml
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageUpdateAutomation
+metadata:
+  name: flux-system
+  namespace: flux-system
+spec:
+  interval: 5m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  git:
+    checkout:
+      ref:
+        branch: main
+    commit:
+      author:
+        email: fluxcdbot@users.noreply.github.com
+        name: fluxcdbot
+      messageTemplate: |
+        chore(images): update {{range .Updated.Images}}{{.}} {{end}}
+    push:
+      branch: main
+  update:
+    path: ./apps
+    strategy: Setters
+```
+
+### 5.4 Checklist — adding another service
+
+1. CI publishes `ghcr.io/nethub-ltd/<image>:X.Y.Z` from git tags `v*`.
+2. Add `apps/<app>/` with the imagepolicy marker.
+3. Add `clusters/k3s/image-<app>.yaml` with a **bounded** semver range.
+4. List that file in `clusters/k3s/kustomization.yaml`.
+5. Ensure `flux-system/ghcr-credentials` can read the package (`read:packages`).
+6. Merge, reconcile, confirm ImagePolicy tag, let automation commit the deployment bump.
+
+Flow:
+
+1. Scan GHCR on the ImageRepository interval  
+2. ImagePolicy elects the newest tag **inside the range**  
+3. ImageUpdateAutomation commits the new tag into this repo  
+4. Apps Kustomization deploys it  
+
+
 ---
 apiVersion: image.toolkit.fluxcd.io/v1beta2
 kind: ImageRepository
