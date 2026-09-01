@@ -1,26 +1,21 @@
 # Task Tracker
 
-**Branch:** `fix/flux-apply-image-automation`  
+**Branch:** `fix/flux-image-api-v1`  
 **Base:** `main`
 
 ## Goal
-Apply Flux image automation objects so the cluster can select newer semver tags (e.g. 0.0.40) without manual image pins.
+Fix flux-system reconcile: ImagePolicy/ImageRepository/ImageUpdateAutomation must use API version served by the cluster CRDs (`v1`, not `v1beta2`).
 
 ## Approved scope
-- Add `clusters/k3s/kustomization.yaml` listing flux-system, infrastructure, apps, image-tawala-api, image-automation
-- README troubleshooting row for ImageRepository/ImagePolicy NotFound
-- Do **not** manually change deployment image tag to 0.0.40
+Continuation of image-automation apply work — unblock ReconciliationFailed.
 
 ## Done
-- [x] Add clusters/k3s/kustomization.yaml
-- [x] README troubleshooting note
-- [x] Trackers
+- [x] clusters/k3s/kustomization.yaml (PR #9)
+- [x] Bump image toolkit manifests to `image.toolkit.fluxcd.io/v1`
 
 ## Remaining
-- [ ] PR review / merge
-- [ ] Cluster reconcile verification (user)
+- [ ] PR merge + cluster reconcile
+- [ ] Verify ImagePolicy selects 0.0.40 via automation (no manual pin)
 
 ## Out of scope
-- Manual image tag bump
-- TawalaKE CI changes
-- JWT / SECRET_KEY
+- Manual deployment image tag change
