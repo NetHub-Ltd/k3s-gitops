@@ -1,0 +1,26 @@
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: tawala-api
+  namespace: flux-system
+spec:
+  image: ghcr.io/nethub-ltd/tawala-api
+  interval: 5m
+  # Private package – credentials created once on the cluster as ghcr-credentials
+  # (or use the same ghcr-registry-key if you prefer one secret)
+  secretRef:
+    name: ghcr-credentials
+
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImagePolicy
+metadata:
+  name: tawala-api
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: tawala-api
+  policy:
+    semver:
+      range: ">=0.0.1"

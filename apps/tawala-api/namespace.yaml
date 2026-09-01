@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nethub
+  labels:
+    app.kubernetes.io/name: tawala
+    app.kubernetes.io/part-of: tawala
