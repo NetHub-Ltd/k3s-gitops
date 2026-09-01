@@ -453,6 +453,7 @@ Flux self-manages. When a new version is released, update the manifests in `clus
 | `secrets "sops-age" not found` | Age private key not loaded | `kubectl create secret generic sops-age …` (see bootstrap section) |
 | Kustomization stuck on `DependencyNotReady` | Parent Kustomization failing | Check the parent with `flux get kustomizations` and `flux logs` |
 | Image never updates | Marker missing or wrong policy | Verify the `# {"$imagepolicy": "..."}` comment and the ImagePolicy range |
+| `ImageRepository` / `ImagePolicy` NotFound | `clusters/k3s/*.yaml` image manifests not applied | Ensure `clusters/k3s/kustomization.yaml` lists `image-tawala-api.yaml` and `image-automation.yaml`; reconcile `flux-system` |
 | Secret values are still encrypted in the cluster | Decryption not enabled on the Kustomization | Ensure `spec.decryption.provider: sops` is present |
 | Pods CrashLoopBackOff after secret change | Application does not reload env | Restart the Deployment: `kubectl rollout restart deployment/…` |
 
