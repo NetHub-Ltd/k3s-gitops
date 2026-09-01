@@ -1,0 +1,16 @@
+# Age private keys – never commit
+age.agekey
+*.agekey
+keys.txt
+
+# Local / editor
+.DS_Store
+*.swp
+*.swo
+.env
+.env.*
+!.env.example
+
+# SOPS temporary
+*.dec.yaml
+*.dec.yml
