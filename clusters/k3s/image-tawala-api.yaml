@@ -7,10 +7,13 @@ metadata:
 spec:
   image: ghcr.io/nethub-ltd/tawala-api
   interval: 5m
-  # Private package – credentials created once on the cluster as ghcr-credentials
-  # (or use the same ghcr-registry-key if you prefer one secret)
+  # Shared GHCR read credentials for all ImageRepositories in flux-system
   secretRef:
     name: ghcr-credentials
+  exclusionList:
+    - "^.*\\.sig$"
+    - "^main$"
+    - "^latest$"
 
 ---
 apiVersion: image.toolkit.fluxcd.io/v1
@@ -23,4 +26,7 @@ spec:
     name: tawala-api
   policy:
     semver:
-      range: ">=0.0.1"
+      # Bound the active channel (0.0.x). Do not use unbounded >=0.0.1 when
+      # older lines like 0.1.x still exist in GHCR — highest semver would win.
+      # When cutting a new minor/major, update this range in the same change window.
+      range: ">=0.0.0 <0.1.0"

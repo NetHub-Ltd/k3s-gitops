@@ -1,21 +1,20 @@
 # Task Tracker
 
-**Branch:** `fix/flux-image-api-v1`  
+**Branch:** `fix/image-policy-bounded-semver`  
 **Base:** `main`
 
 ## Goal
-Fix flux-system reconcile: ImagePolicy/ImageRepository/ImageUpdateAutomation must use API version served by the cluster CRDs (`v1`, not `v1beta2`).
+Bound tawala-api ImagePolicy to 0.0.x and document multi-app image automation pattern.
 
 ## Approved scope
-Continuation of image-automation apply work — unblock ReconciliationFailed.
+- ImagePolicy range `>=0.0.0 <0.1.0`
+- exclusionList for main/latest/sig
+- README section 5: versioning contract, template, checklist
+- No manual deployment image pin
 
 ## Done
-- [x] clusters/k3s/kustomization.yaml (PR #9)
-- [x] Bump image toolkit manifests to `image.toolkit.fluxcd.io/v1`
+- [x] image-tawala-api.yaml policy + exclusions
+- [x] README section 5 rewrite
 
 ## Remaining
-- [ ] PR merge + cluster reconcile
-- [ ] Verify ImagePolicy selects 0.0.40 via automation (no manual pin)
-
-## Out of scope
-- Manual deployment image tag change
+- [ ] PR merge + cluster verify elected tag is 0.0.40
