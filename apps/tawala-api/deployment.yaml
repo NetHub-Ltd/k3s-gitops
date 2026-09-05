@@ -22,7 +22,7 @@ spec:
         - name: ghcr-registry-key
       containers:
         - name: api
-          image: ghcr.io/nethub-ltd/tawala-api:0.0.43 # {"$imagepolicy": "flux-system:tawala-api"}
+          image: ghcr.io/nethub-ltd/tawala-api:0.0.44 # {"$imagepolicy": "flux-system:tawala-api"}
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
