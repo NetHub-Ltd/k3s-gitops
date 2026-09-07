@@ -1,14 +1,13 @@
-# Task Tracker
+# Task: Migrate nethub-api into k3s-gitops
 
-**Branch:** `fix/image-automation-changed-template`  
-**Base:** `main`
-
-## Goal
-Unstall ImageUpdateAutomation: messageTemplate must use `.Changed` not removed `.Updated`.
-
-## Done
-- [x] image-automation.yaml template field
-- [x] README examples aligned
-
-## Remaining
-- [ ] Merge + reconcile; confirm commit bumps deployment to 0.0.40
+- **Goal:** First service transfer (nethub-api) per approved proposal
+- **Status:** Implementation complete on branch feat/migrate-nethub-api
+- **Done:**
+  - apps/nethub-api/* (namespace, deployment, service, ingress, secret.enc.yaml, kustomization)
+  - Ingress mirrors tawala (Traefik only, no cert-manager)
+  - DB/env from nethub-cluster values/fastapi.yaml
+  - SOPS-encrypted secrets
+  - apps/kustomization.yaml lists nethub-api
+  - MIGRATION.md marks nethub-api done; keycloak pending
+- **Remaining:** PR to main; user rotates SOPS secrets to real values; verify Flux; then Keycloak PR
+- **Out of scope this PR:** keycloak, redis, cert-manager annotations, image automation (Docker Hub image)
