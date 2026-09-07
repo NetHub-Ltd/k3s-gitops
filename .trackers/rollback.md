@@ -1,3 +1,2 @@
 # Rollback
-
-Revert PR. Restoring `.Updated` will stall automation again on current controller.
+Remove `- keycloak` from apps/kustomization.yaml; Flux prune. Or revert PR.

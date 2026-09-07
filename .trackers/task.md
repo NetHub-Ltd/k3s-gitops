@@ -1,14 +1,5 @@
-# Task Tracker
+# Task: Migrate keycloak into k3s-gitops
 
-**Branch:** `fix/image-automation-changed-template`  
-**Base:** `main`
-
-## Goal
-Unstall ImageUpdateAutomation: messageTemplate must use `.Changed` not removed `.Updated`.
-
-## Done
-- [x] image-automation.yaml template field
-- [x] README examples aligned
-
-## Remaining
-- [ ] Merge + reconcile; confirm commit bumps deployment to 0.0.40
+- **Status:** Implementation on feat/migrate-keycloak
+- **Done:** apps/keycloak/*, SOPS secret, apps/kustomization.yaml, MIGRATION.md
+- **Remaining:** PR merge, rotate secrets, Flux verify, mark nethub-cluster source
