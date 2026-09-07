@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nethub-api
+  namespace: nethub
+  labels:
+    app: nethub-api
+    app.kubernetes.io/name: nethub-api
+    app.kubernetes.io/part-of: nethub
+    nethub.co.ke/migrated-from: nethub-cluster
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nethub-api
+  template:
+    metadata:
+      labels:
+        app: nethub-api
+        app.kubernetes.io/name: nethub-api
+    spec:
+      containers:
+        - name: api
+          # Source image from nethub-cluster values/fastapi.yaml.
+          # Switch to ghcr.io/nethub-ltd/nethubke when published for image automation.
+          image: daviekaranja254/nethubke:v0.0.3
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8000
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "512Mi"
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+          envFrom:
+            - secretRef:
+                name: nethub-api-secrets
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 60
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 30
