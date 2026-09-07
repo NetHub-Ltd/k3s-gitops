@@ -34,3 +34,10 @@ After Flux shows the app healthy, stop applying the old nethub-cluster manifests
 ## Cutover note
 
 After Flux reconciles a service healthy, scale down or stop applying the old nethub-cluster definition for that service to avoid double Ingress / double Deployment.
+
+## Image automation (nethub-api)
+
+- Image: `ghcr.io/nethub-ltd/nethubke`
+- ImageRepository / ImagePolicy: `clusters/k3s/image-nethubke.yaml`
+- Deployment marker: `# {"$imagepolicy": "flux-system:nethubke"}`
+- CI (NetHubKe repo) pushes `0.0.<run_number>` on master/main; Flux bumps the tag in `apps/nethub-api/deployment.yaml` automatically.

@@ -19,11 +19,13 @@ spec:
         app: nethub-api
         app.kubernetes.io/name: nethub-api
     spec:
+      imagePullSecrets:
+        - name: ghcr-registry-key
       containers:
         - name: api
-          # Source image from nethub-cluster values/fastapi.yaml.
-          # Switch to ghcr.io/nethub-ltd/nethubke when published for image automation.
-          image: daviekaranja254/nethubke:v0.0.3
+          # Flux ImageUpdateAutomation updates this tag when a newer 0.0.x
+          # appears on ghcr.io/nethub-ltd/nethubke (see clusters/k3s/image-nethubke.yaml).
+          image: ghcr.io/nethub-ltd/nethubke:0.0.1 # {"$imagepolicy": "flux-system:nethubke"}
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

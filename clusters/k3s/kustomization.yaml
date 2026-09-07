@@ -5,4 +5,5 @@ resources:
   - infrastructure.yaml
   - apps.yaml
   - image-tawala-api.yaml
+  - image-nethubke.yaml
   - image-automation.yaml
