@@ -3,4 +3,5 @@ kind: Kustomization
 resources:
   - example-app
   - tawala-api
+  - keycloak
   - nethub-api

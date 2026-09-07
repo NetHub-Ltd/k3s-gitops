@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: keycloak-config
+  namespace: nethub
+  labels:
+    app.kubernetes.io/name: keycloak
+    nethub.co.ke/migrated-from: nethub-cluster
+data:
+  # Host / Proxy (from nethub-cluster nethub_stack/services/keycloak.yaml)
+  KC_HOSTNAME: "auth.nethub.co.ke"
+  KC_HOSTNAME_URL: "https://auth.nethub.co.ke"
+  KC_HOSTNAME_STRICT: "false"
+  KC_HOSTNAME_STRICT_HTTPS: "false"
+  KC_PROXY: "edge"
+  KC_PROXY_HEADERS: "xforwarded"
+  KC_HTTP_ENABLED: "true"
+  # Database — exact URL from source ConfigMap
+  KC_DB: "postgres"
+  KC_DB_SCHEMA: "public"
+  KC_DB_URL: "jdbc:postgresql://nethub-db-cluster-rw.postgres.svc.cluster.local:5432/keycloak"
+  # Observability
+  KC_HEALTH_ENABLED: "true"
+  KC_METRICS_ENABLED: "true"
+  KC_HTTP_MANAGEMENT_PORT: "9000"
+  JAVA_OPTS_APPEND: "-Dkeycloak.migration.replace-placeholders=true"

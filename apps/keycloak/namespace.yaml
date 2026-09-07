@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nethub
+  labels:
+    app.kubernetes.io/name: keycloak
+    app.kubernetes.io/part-of: nethub
+    nethub.co.ke/migrated-from: nethub-cluster
