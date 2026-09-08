@@ -4,45 +4,20 @@ Track each service as it moves. **Do not apply migrated services from nethub-clu
 
 | Service | Source (nethub-cluster) | Target (k3s-gitops) | Status | Notes |
 |---------|-------------------------|---------------------|--------|-------|
-| nethub-api | `k3s/nethub/webapp-helm-chart-v2/values/fastapi.yaml` | `apps/nethub-api/` | done / in PR | See PR #15 if not yet on main. Ingress `api.nethub.co.ke`. |
-| **keycloak** | `nethub_stack/services/keycloak.yaml` | `apps/keycloak/` | **done** | Ingress `auth.nethub.co.ke` + `asfalis.nethub.co.ke`. DB URL: `jdbc:postgresql://nethub-db-cluster-rw.postgres.svc.cluster.local:5432/keycloak`. Image `quay.io/keycloak/keycloak:26.0`. Traefik only (no cert-manager). Traefik Middleware CRD not migrated (follow-up). Realm import not wired (existing DB data). |
-| redis | `nethub_stack/services/redis.yaml` | TBD | pending | |
+| nethub-api | `values/fastapi.yaml` | `apps/nethub-api/` | done | GHCR + image automation |
+| keycloak | `nethub_stack/services/keycloak.yaml` | `apps/keycloak/` | done | |
+| **redis-shared** | `nethub_stack/services/redis.yaml` | `apps/redis-shared/` | **done** | **Adopt in place** — same STS/Service/PVC names. SOPS `redis-creds`. No extra Namespace. |
+| mazeltov | `k3s/mazeltov/` | TBD | pending | Separate namespace |
 | cloudflared / middlewares | `nethub_stack/services/*` | TBD | pending | |
-| databases (CNPG refs) | `nethub_stack/database/*` | TBD | pending | Shared dependency |
+| databases (CNPG) | `nethub_stack/database/*` | TBD | pending | |
 
-## Marker convention
+## Redis adopt notes
 
-- Update this table in the same PR that adds `apps/<service>/`.
-- Label workloads with `nethub.co.ke/migrated-from: nethub-cluster`.
-- In nethub-cluster, add `MIGRATED-*.md` pointing at k3s-gitops path.
-
-## Cutover
-
-After Flux shows the app healthy, stop applying the old nethub-cluster manifests for that service to avoid duplicate Deployment/Ingress.
-| **nethub-api** | `k3s/nethub/webapp-helm-chart-v2/values/fastapi.yaml` + Helm chart | `apps/nethub-api/` | **done** | Ingress: `api.nethub.co.ke` (Traefik only, no cert-manager). DB host from values: `nethub-db-pooler.postgres.svc.cluster.local`. Image: `daviekaranja254/nethubke:v0.0.3` (placeholder secrets in SOPS — rotate before prod). |
-| keycloak | `nethub_stack/services/keycloak.yaml` | `apps/keycloak/` | pending | Next wave |
-| redis | `nethub_stack/services/redis.yaml` | TBD | pending | |
-| cloudflared / middlewares | `nethub_stack/services/*` | TBD | pending | |
-| databases (CNPG refs) | `nethub_stack/database/*` | TBD | pending | Shared dependency — do not recreate lightly |
-
-## Marker convention
-
-- This table is updated in the **same PR** that adds an app under `apps/`.
-- Workloads get label `nethub.co.ke/migrated-from: nethub-cluster` where applicable.
-- In **nethub-cluster**, add a short `MIGRATED.md` note or header comment pointing at k3s-gitops path.
-
-## Cutover note
-
-After Flux reconciles a service healthy, scale down or stop applying the old nethub-cluster definition for that service to avoid double Ingress / double Deployment.
-
-## Image automation (nethub-api)
-
-- Image: `ghcr.io/nethub-ltd/nethubke`
-- ImageRepository / ImagePolicy: `clusters/k3s/image-nethubke.yaml`
-- Deployment marker: `# {"$imagepolicy": "flux-system:nethubke"}`
-- CI (NetHubKe repo) pushes `0.0.<run_number>` on master/main; Flux bumps the tag in `apps/nethub-api/deployment.yaml` automatically.
+- DNS unchanged: `redis-shared.nethub.svc.cluster.local:6379`
+- PVC claim template name must stay `redis-data` (volume `redis-data-redis-shared-0`)
+- First apply should match live spec to avoid unnecessary pod restart
+- Password is SOPS-encrypted; rotate later with a coordinated client update
 
 ## Kustomize note (shared namespace)
 
-Only **one** `Namespace/nethub` manifest may appear under `apps/` (currently `apps/tawala-api/namespace.yaml`).
-Other apps set `namespace: nethub` in their kustomization.yaml but must **not** include another `namespace.yaml`.
+Only **one** `Namespace/nethub` under `apps/` (`apps/tawala-api/namespace.yaml`).
