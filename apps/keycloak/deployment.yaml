@@ -19,9 +19,13 @@ spec:
         app: keycloak
         app.kubernetes.io/name: keycloak
     spec:
+      imagePullSecrets:
+        - name: ghcr-registry-key
       containers:
         - name: keycloak
-          image: quay.io/keycloak/keycloak:26.0
+          # Built from NetHub-Ltd/keycloak-config (themes + realm templates on 26.7.3)
+          image: ghcr.io/nethub-ltd/keycloak:0.0.1 # {"$imagepolicy": "flux-system:keycloak"}
+          imagePullPolicy: IfNotPresent
           args: ["start"]
           ports:
             - name: http
