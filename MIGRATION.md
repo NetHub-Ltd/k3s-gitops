@@ -21,3 +21,9 @@ Track each service as it moves. **Do not apply migrated services from nethub-clu
 ## Kustomize note (shared namespace)
 
 Only **one** `Namespace/nethub` under `apps/` (`apps/tawala-api/namespace.yaml`).
+
+## Keycloak image
+
+- Tracked in `apps/keycloak/deployment.yaml`
+- Bumped to `quay.io/keycloak/keycloak:26.7.3` (from 26.0)
+- Realm/clients/themes portability: prefer exported realm JSON + optional dedicated config repo (see PR notes)
