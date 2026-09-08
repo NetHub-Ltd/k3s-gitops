@@ -1,5 +1,5 @@
-# Task: Tie nethub-api to GHCR + Flux image automation
+# Task: Migrate redis-shared (adopt in place)
 
-- Point deployment at ghcr.io/nethub-ltd/nethubke
-- Add ImageRepository/Policy nethubke
-- imagePullSecrets: ghcr-registry-key
+- apps/redis-shared StatefulSet+Service+SOPS secret
+- No duplicate Namespace
+- MIGRATION.md updated
