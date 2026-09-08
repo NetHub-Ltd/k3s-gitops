@@ -3,5 +3,5 @@ kind: Namespace
 metadata:
   name: nethub
   labels:
-    app.kubernetes.io/name: tawala
-    app.kubernetes.io/part-of: tawala
+    app.kubernetes.io/name: nethub
+    app.kubernetes.io/part-of: nethub
