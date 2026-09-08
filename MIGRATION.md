@@ -41,3 +41,8 @@ After Flux reconciles a service healthy, scale down or stop applying the old net
 - ImageRepository / ImagePolicy: `clusters/k3s/image-nethubke.yaml`
 - Deployment marker: `# {"$imagepolicy": "flux-system:nethubke"}`
 - CI (NetHubKe repo) pushes `0.0.<run_number>` on master/main; Flux bumps the tag in `apps/nethub-api/deployment.yaml` automatically.
+
+## Kustomize note (shared namespace)
+
+Only **one** `Namespace/nethub` manifest may appear under `apps/` (currently `apps/tawala-api/namespace.yaml`).
+Other apps set `namespace: nethub` in their kustomization.yaml but must **not** include another `namespace.yaml`.
