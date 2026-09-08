@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/part-of: nethub
     nethub.co.ke/migrated-from: nethub-cluster
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: nethub-api
