@@ -21,3 +21,10 @@ Track each service as it moves. **Do not apply migrated services from nethub-clu
 ## Kustomize note (shared namespace)
 
 Only **one** `Namespace/nethub` under `apps/` (`apps/tawala-api/namespace.yaml`).
+
+## Keycloak custom image
+
+- Source repo: `NetHub-Ltd/keycloak-config`
+- Image: `ghcr.io/nethub-ltd/keycloak` (themes + realm templates, base 26.7.3)
+- ImageRepository/Policy: `clusters/k3s/image-keycloak.yaml`
+- Deployment marker: `# {"$imagepolicy": "flux-system:keycloak"}`
