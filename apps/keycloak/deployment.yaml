@@ -33,12 +33,12 @@ spec:
             - name: management
               containerPort: 9000
           resources:
-            requests:
-              cpu: "500m"
-              memory: "1Gi"
             limits:
-              cpu: "1000m"
-              memory: "2Gi"
+              cpu: "500m"
+              memory: "512Mi"
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
           envFrom:
             - configMapRef:
                 name: keycloak-config
