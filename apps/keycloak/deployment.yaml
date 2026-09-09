@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/part-of: nethub
     nethub.co.ke/migrated-from: nethub-cluster
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: keycloak
@@ -19,9 +19,14 @@ spec:
         app: keycloak
         app.kubernetes.io/name: keycloak
     spec:
+      imagePullSecrets:
+        - name: ghcr-registry-key
       containers:
         - name: keycloak
           image: quay.io/keycloak/keycloak:26.7.3
+          # Built from NetHub-Ltd/keycloak-config (themes + realm templates on 26.7.3)
+          image: ghcr.io/nethub-ltd/keycloak:0.0.4 # {"$imagepolicy": "flux-system:keycloak"}
+          imagePullPolicy: IfNotPresent
           args: ["start"]
           ports:
             - name: http

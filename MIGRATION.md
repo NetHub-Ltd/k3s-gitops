@@ -27,3 +27,9 @@ Only **one** `Namespace/nethub` under `apps/` (`apps/tawala-api/namespace.yaml`)
 - Tracked in `apps/keycloak/deployment.yaml`
 - Bumped to `quay.io/keycloak/keycloak:26.7.3` (from 26.0)
 - Realm/clients/themes portability: prefer exported realm JSON + optional dedicated config repo (see PR notes)
+## Keycloak custom image
+
+- Source repo: `NetHub-Ltd/keycloak-config`
+- Image: `ghcr.io/nethub-ltd/keycloak` (themes + realm templates, base 26.7.3)
+- ImageRepository/Policy: `clusters/k3s/image-keycloak.yaml`
+- Deployment marker: `# {"$imagepolicy": "flux-system:keycloak"}`
