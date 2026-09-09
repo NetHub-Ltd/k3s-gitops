@@ -24,7 +24,7 @@ spec:
       containers:
         - name: keycloak
           # Built from NetHub-Ltd/keycloak-config — single image key only (YAML forbids duplicates)
-          image: ghcr.io/nethub-ltd/keycloak:0.0.5 # {"$imagepolicy": "flux-system:keycloak"}
+          image: ghcr.io/nethub-ltd/keycloak:0.0.8 # {"$imagepolicy": "flux-system:keycloak"}
           imagePullPolicy: IfNotPresent
           args: ["start"]
           ports:
