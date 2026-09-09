@@ -23,9 +23,8 @@ spec:
         - name: ghcr-registry-key
       containers:
         - name: keycloak
-          image: quay.io/keycloak/keycloak:26.7.3
-          # Built from NetHub-Ltd/keycloak-config (themes + realm templates on 26.7.3)
-          image: ghcr.io/nethub-ltd/keycloak:0.0.4 # {"$imagepolicy": "flux-system:keycloak"}
+          # Built from NetHub-Ltd/keycloak-config — single image key only (YAML forbids duplicates)
+          image: ghcr.io/nethub-ltd/keycloak:0.0.5 # {"$imagepolicy": "flux-system:keycloak"}
           imagePullPolicy: IfNotPresent
           args: ["start"]
           ports:
