@@ -25,6 +25,8 @@ spec:
         - name: keycloak
           image: ghcr.io/nethub-ltd/keycloak:0.0.9 # {"$imagepolicy": "flux-system:keycloak"}
           imagePullPolicy: IfNotPresent
+          # After ghcr image includes kc.sh build (keycloak-config optimized Dockerfile):
+          # args: ["start", "--optimized"]
           args: ["start"]
           ports:
             - name: http
