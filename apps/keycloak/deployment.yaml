@@ -23,7 +23,7 @@ spec:
         - name: ghcr-registry-key
       containers:
         - name: keycloak
-          image: ghcr.io/nethub-ltd/keycloak:0.0.10 # {"$imagepolicy": "flux-system:keycloak"}
+          image: ghcr.io/nethub-ltd/keycloak:0.0.12 # {"$imagepolicy": "flux-system:keycloak"}
           imagePullPolicy: IfNotPresent
           args: ["start", "--optimized"]
           ports:
