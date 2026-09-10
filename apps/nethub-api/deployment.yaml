@@ -25,7 +25,7 @@ spec:
         - name: api
           # Flux ImageUpdateAutomation updates this tag when a newer 0.0.x
           # appears on ghcr.io/nethub-ltd/nethubke (see clusters/k3s/image-nethubke.yaml).
-          image: ghcr.io/nethub-ltd/nethubke:0.0.17 # {"$imagepolicy": "flux-system:nethubke"}
+          image: ghcr.io/nethub-ltd/nethubke:0.0.18 # {"$imagepolicy": "flux-system:nethubke"}
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
