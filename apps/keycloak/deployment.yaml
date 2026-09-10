@@ -25,7 +25,7 @@ spec:
         - name: keycloak
           image: ghcr.io/nethub-ltd/keycloak:0.0.9 # {"$imagepolicy": "flux-system:keycloak"}
           imagePullPolicy: IfNotPresent
-          args: ["start"]
+          args: ["start", "--optimized"]
           ports:
             - name: http
               containerPort: 8080
