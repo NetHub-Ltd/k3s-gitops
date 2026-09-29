@@ -37,6 +37,38 @@ spec:
           envFrom:
             - secretRef:
                 name: tawala-secrets
+          # Shared DB + Redis override envFrom (single rotation point)
+          env:
+            - name: DATABASE_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: nethub-db-app-creds
+                  key: host
+            - name: DATABASE_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: nethub-db-app-creds
+                  key: port
+            - name: DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: nethub-db-app-creds
+                  key: username
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nethub-db-app-creds
+                  key: password
+            - name: DATABASE_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: nethub-db-app-creds
+                  key: tawala_db_name
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: nethub-redis-app-creds
+                  key: url
           livenessProbe:
             httpGet:
               path: /health

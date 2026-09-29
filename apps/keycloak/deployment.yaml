@@ -44,6 +44,18 @@ spec:
                 name: keycloak-config
             - secretRef:
                 name: keycloak-secrets
+          # Shared DB role overrides secret envFrom (single rotation point)
+          env:
+            - name: KC_DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: nethub-db-app-creds
+                  key: username
+            - name: KC_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nethub-db-app-creds
+                  key: password
           startupProbe:
             httpGet:
               path: /health/started

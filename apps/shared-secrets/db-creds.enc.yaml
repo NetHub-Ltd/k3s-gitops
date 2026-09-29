@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: nethub-db-app-creds
+    namespace: nethub
+    labels:
+        app.kubernetes.io/name: nethub-db-app-creds
+        app.kubernetes.io/part-of: nethub
+        nethub.co.ke/purpose: shared-db-credentials
+type: Opaque
+stringData:
+    #ENC[AES256_GCM,data:Ovk4wJp2HnpmmasyOLuHHrGwTe53xBV9047lZ/CeOxm1CuGXs4QkkQp+fHTIPcCkVg==,iv:hgLTbCoOfP1FS/njYSoqwaJWYNxinI+zhR0VkZH8bPg=,tag:xBhTNw6zFKd4+DI+oMuMSg==,type:comment]
+    username: ENC[AES256_GCM,data:sAz47HidVvx+x/3U,iv:mul0yEHOnOuoN+sSzkqCS0k5Blhtc415bds7XpxMmwk=,tag:WqZ7hsf/X0RCo4iTl++icA==,type:str]
+    password: ENC[AES256_GCM,data:t0pYOWzh6p9ICIAWLScMbk+udYEguA==,iv:cFqbgPHacsiJjRqrDKlGDmK7fBEz4sCeDsCJPfUk7vA=,tag:wW5wV+Uki6nm2sCtCoqiGQ==,type:str]
+    host: ENC[AES256_GCM,data:dv34ILBo+rkRLcUwiWqGhmsRymtFJeULMyWki4CgpcKmXY5xp8zJ6zWu6A==,iv:xW6CRdnHTvdDAXLb3Wt3QFAZMPrN4+tHKqNgT9fp5SE=,tag:jk0EDTP0TxYIBMdJD6BplA==,type:str]
+    port: ENC[AES256_GCM,data:EWaU3Q==,iv:Cl8AbUDNBOM++WjTS7ZfMm+Y1oZ46qa1UBv9XB/0R0Q=,tag:M+auHlObNrurnP7CdU51eQ==,type:str]
+    #ENC[AES256_GCM,data:/rzQpzUVdgBoFkuC+S+mBJ0bp0RNtw8=,iv:Yf19wEqkWj4gwJrtF7m16xsZE0nWE7vRjleL4I16f24=,tag:pmv3+AZGC09HfKj3p//Gug==,type:comment]
+    nethub_db_name: ENC[AES256_GCM,data:vVWAYjc5YQM/,iv:9QizpASV2MK2jY+TVI3ad07I+OgjMj0Nr/okSgqXQzA=,tag:emEf9txrroSgGr40YqbP+Q==,type:str]
+    tawala_db_name: ENC[AES256_GCM,data:SMMQ6sFPvfnH,iv:3I/duBvoH7H9KOVlfB3uayvecpmOD2bWILYChS6dLWA=,tag:1E5Ymx0DJPumumqThEN3Og==,type:str]
+    keycloak_db_name: ENC[AES256_GCM,data:74PBZ7Vy82Q=,iv:PRZuj9nAZTuKd6iRVxw9BUfpGtDjoPBpobpOZ5qCInY=,tag:EPO1o8kaCoyGQkRgYIzVQQ==,type:str]
+    #ENC[AES256_GCM,data:WVk7Rb/+8HtUBynKI72fjBW+d9Oqntxm2+W3sMYx4qYX8VR3jd7rpekav1TlLPUkUWRpjTNjx9JWRvzLPC7v5GZZDUpn+hiZ0ShxRo87XQLX,iv:A7C6AUMSBQrYVuarDt1t3RpNwLljqlClqGLXOTuojgo=,tag:pmlD/AiXMTck+KZFruIuoA==,type:comment]
+    keycloak_db_host: ENC[AES256_GCM,data:izr+OK/5mrqhkclEI4tMpy3uHFQQNr+JrHe4bJX8svDdpmXYidC/yxIz8whjwXY=,iv:L68uQjcPFWnx6VT9bfO1/bRlm2ByJ6l6EgxLuk6DJ0g=,tag:6ugD1My8t47p86kglDZo0Q==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1wy58yxmfdehpfyzwkw3kvqfkv0ze65lyf6yuhe5xt5n6md0vhyssnqkf2t
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBCLzZCd2k3NWYvSDh3WHov
+            OWFycUxDVlBoUldVR3dCNTcyY05FT3NJdWlRClZMdUpKMHNYdGlHM1dXNmxqVUJm
+            OEFkQ0FIekoxbHFQU050aE5xWWo0YVEKLS0tIDhQNnVTOVlYd0dIN3dzTHhPd25i
+            ZVJBNUVMKzRxSzBWMUd0dHpOQ2FRWlkKWLIDD8zbC43wvoY9jEVxIiMRlkAxliZX
+            tf26LULdtUpfSDOJPOcSFCYclukVkbOTuSaPh7LX/UQ7UK0a//r2iQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2026-09-29T14:01:55Z"
+    mac: ENC[AES256_GCM,data:02GK8JRxCtgBA8zacwzACc09pNRxWp/f9Gp/KirZ/S7Zy4p9T7Jd0F9u50Qrm2AfbQI85xdobcXGdlC1y30uzuGy0UakflLOOMAtG8u3fs3NUVKUiCYyVzMZC131SpIgf+Ug0cbopsvbEiOn6/5i3mkLFOjIZOWdk8mpbDLOgbc=,iv:mBzn+TBughso4JfLDENZR+b64FYW+VXEjKeAl1LhWmg=,tag:mdUyDHBDta6eiv6tmiBS4A==,type:str]
+    pgp: []
+    encrypted_regex: ^(data|stringData)$
+    version: 3.9.4
