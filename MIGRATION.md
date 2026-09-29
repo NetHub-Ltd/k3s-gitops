@@ -7,9 +7,9 @@ Track each service as it moves. **Do not apply migrated services from nethub-clu
 | nethub-api | `values/fastapi.yaml` | `apps/nethub-api/` | done | GHCR + image automation |
 | keycloak | `nethub_stack/services/keycloak.yaml` | `apps/keycloak/` | done | |
 | **redis-shared** | `nethub_stack/services/redis.yaml` | `apps/redis-shared/` | **done** | **Adopt in place** — same STS/Service/PVC names. SOPS `redis-creds`. No extra Namespace. |
+| **cnpg / nethub-db-cluster** | `nethub_stack/database/database.yaml` (R2) | `apps/cnpg-nethub-db/` | **adopt PR** | **Adopt in place only.** Namespace `postgres`. PVC `nethub-db-cluster-1` 15Gi local-path. No bootstrap, no secret rotation, no operator move in PR1. MinIO manifest is obsolete — do not apply. |
 | mazeltov | `k3s/mazeltov/` | TBD | pending | Separate namespace |
 | cloudflared / middlewares | `nethub_stack/services/*` | TBD | pending | |
-| databases (CNPG) | `nethub_stack/database/*` | TBD | pending | |
 
 ## Redis adopt notes
 
@@ -17,6 +17,21 @@ Track each service as it moves. **Do not apply migrated services from nethub-clu
 - PVC claim template name must stay `redis-data` (volume `redis-data-redis-shared-0`)
 - First apply should match live spec to avoid unnecessary pod restart
 - Password is SOPS-encrypted; rotate later with a coordinated client update
+
+## CNPG adopt notes (nethub-db-cluster)
+
+- **Zero downtime / no data movement** — Flux adopts existing Cluster + Pooler; does not recreate PVC.
+- Namespace: `postgres` (not `nethub`). Do not create a second Namespace resource that fights live.
+- Cluster name: `nethub-db-cluster` — must not change.
+- PVC: `nethub-db-cluster-1` Bound 15Gi `local-path` — must not change size/class in PR1.
+- DNS unchanged:
+  - `nethub-db-cluster-rw.postgres.svc.cluster.local`
+  - `nethub-db-pooler.postgres.svc.cluster.local`
+- Backup: Cloudflare R2 via existing secret `backup-creds` in `postgres` (not managed in git in PR1).
+- Operator stays in `cnpg-system` unmanaged by this PR.
+- Do **not** apply `nethub_stack/full-database-manifest.yaml` (old MinIO design).
+- Do **not** add `bootstrap.initdb` in PR1 (cluster already has data on PVC).
+- Verify after Flux reconcile: phase healthy, same PVC volume, archiving/backup still OK.
 
 ## Kustomize note (shared namespace)
 

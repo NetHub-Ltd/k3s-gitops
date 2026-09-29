@@ -1,0 +1,22 @@
+# ADOPT IN PLACE — PgBouncer pooler for nethub-db-cluster
+# DNS must stay: nethub-db-pooler.postgres.svc.cluster.local
+apiVersion: postgresql.cnpg.io/v1
+kind: Pooler
+metadata:
+  name: nethub-db-pooler
+  namespace: postgres
+  labels:
+    app.kubernetes.io/name: nethub-db-pooler
+    app.kubernetes.io/part-of: nethub
+    nethub.co.ke/migrated-from: nethub-cluster
+    nethub.co.ke/adopt: "true"
+spec:
+  cluster:
+    name: nethub-db-cluster
+  instances: 1
+  type: rw
+  pgbouncer:
+    poolMode: transaction
+    parameters:
+      max_client_conn: "1000"
+      default_pool_size: "25"

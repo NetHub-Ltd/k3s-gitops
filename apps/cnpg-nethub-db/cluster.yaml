@@ -1,0 +1,68 @@
+# ADOPT IN PLACE — production Postgres (CNPG)
+# Live cluster: nethub-db-cluster / namespace postgres / PVC nethub-db-cluster-1 (15Gi local-path)
+# DO NOT change: name, namespace, storage.size, storageClass, instances, image major
+# DO NOT add bootstrap.initdb in this PR (cluster already initialized; PVC has data)
+# backup-creds secret must already exist in namespace postgres (not managed here yet)
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: nethub-db-cluster
+  namespace: postgres
+  labels:
+    app.kubernetes.io/name: nethub-db-cluster
+    app.kubernetes.io/part-of: nethub
+    nethub.co.ke/migrated-from: nethub-cluster
+    nethub.co.ke/adopt: "true"
+spec:
+  instances: 1
+  imageName: ghcr.io/cloudnative-pg/postgresql:16
+
+  resources:
+    requests:
+      cpu: "200m"
+      memory: "1Gi"
+    limits:
+      cpu: "1000m"
+      memory: "2Gi"
+
+  storage:
+    size: 15Gi
+    storageClass: local-path
+
+  postgresql:
+    parameters:
+      archive_mode: "on"
+      archive_timeout: "60s"
+      shared_buffers: "256MB"
+      wal_keep_size: "512MB"
+      work_mem: "16MB"
+
+  backup:
+    barmanObjectStore:
+      destinationPath: s3://nethubke-cluster-backup/
+      endpointURL: https://194f1f7c102c35385e4593c17b5d698c.r2.cloudflarestorage.com
+      s3Credentials:
+        accessKeyId:
+          name: backup-creds
+          key: ACCESS_KEY_ID
+        secretAccessKey:
+          name: backup-creds
+          key: ACCESS_SECRET_KEY
+      wal:
+        compression: gzip
+
+  externalClusters:
+    - name: nethub-db-cluster
+      barmanObjectStore:
+        serverName: nethub-db-cluster
+        destinationPath: s3://nethubke-cluster-backup/
+        endpointURL: https://194f1f7c102c35385e4593c17b5d698c.r2.cloudflarestorage.com
+        s3Credentials:
+          accessKeyId:
+            name: backup-creds
+            key: ACCESS_KEY_ID
+          secretAccessKey:
+            name: backup-creds
+            key: ACCESS_SECRET_KEY
+        wal:
+          maxParallel: 2
