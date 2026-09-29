@@ -1,0 +1,48 @@
+# DEV: wipe zitadel DB so first-instance human is recreated from current secrets.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: reset-zitadel-db-v2
+  namespace: nethub
+  labels:
+    app.kubernetes.io/name: reset-zitadel-db-v2
+    nethub.co.ke/purpose: zitadel-rebootstrap
+spec:
+  ttlSecondsAfterFinished: 86400
+  backoffLimit: 3
+  template:
+    metadata:
+      labels:
+        app: reset-zitadel-db-v2
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: reset
+          image: postgres:16-alpine
+          env:
+            - name: PGHOST
+              value: nethub-db-cluster-rw.postgres.svc.cluster.local
+            - name: PGPORT
+              value: "5432"
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: nethub-db-app-creds
+                  key: username
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nethub-db-app-creds
+                  key: password
+            - name: PGDATABASE
+              value: postgres
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -e
+              echo "Scale note: restart zitadel after this job completes."
+              psql -v ON_ERROR_STOP=1 -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'zitadel' AND pid <> pg_backend_pid();" || true
+              psql -v ON_ERROR_STOP=1 -c "DROP DATABASE IF EXISTS zitadel WITH (FORCE);"
+              psql -v ON_ERROR_STOP=1 -c "CREATE DATABASE zitadel OWNER nethub_admin;"
+              echo "Database zitadel recreated empty."
