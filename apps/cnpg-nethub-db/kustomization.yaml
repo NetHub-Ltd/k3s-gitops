@@ -8,3 +8,4 @@ resources:
   - job-drop-keycloak-db.yaml
   - job-reset-zitadel-db.yaml
   - job-reset-zitadel-db-v2.yaml
+  - job-reset-zitadel-db-v3.yaml

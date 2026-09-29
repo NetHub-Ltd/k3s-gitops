@@ -17,7 +17,7 @@ spec:
   template:
     metadata:
       annotations:
-        nethub.co.ke/bootstrap: "davie-oonlinegigz-v1"
+        nethub.co.ke/bootstrap: "davie-smtp-v3"
       labels:
         app: zitadel
         app.kubernetes.io/name: zitadel
