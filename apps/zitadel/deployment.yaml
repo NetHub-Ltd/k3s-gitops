@@ -20,6 +20,8 @@ spec:
         app: zitadel
         app.kubernetes.io/name: zitadel
     spec:
+      # K8s injects ZITADEL_PORT=tcp://x:80 which breaks ExternalPort uint parse
+      enableServiceLinks: false
       containers:
         - name: zitadel
           image: ghcr.io/zitadel/zitadel:v2.71.11
