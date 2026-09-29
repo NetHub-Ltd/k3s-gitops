@@ -1,0 +1,48 @@
+# DEV: wipe and recreate zitadel DB after failed partial init (new masterkey / admin password).
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: reset-zitadel-db
+  namespace: nethub
+  labels:
+    app.kubernetes.io/name: reset-zitadel-db
+    nethub.co.ke/purpose: zitadel-clean-init
+spec:
+  ttlSecondsAfterFinished: 86400
+  backoffLimit: 3
+  template:
+    metadata:
+      labels:
+        app: reset-zitadel-db
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: reset
+          image: postgres:16-alpine
+          env:
+            - name: PGHOST
+              value: nethub-db-cluster-rw.postgres.svc.cluster.local
+            - name: PGPORT
+              value: "5432"
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: nethub-db-app-creds
+                  key: username
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nethub-db-app-creds
+                  key: password
+            - name: PGDATABASE
+              value: postgres
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -e
+              echo "Dropping zitadel database (clean init)..."
+              psql -v ON_ERROR_STOP=1 -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'zitadel' AND pid <> pg_backend_pid();" || true
+              psql -v ON_ERROR_STOP=1 -c "DROP DATABASE IF EXISTS zitadel WITH (FORCE);"
+              psql -v ON_ERROR_STOP=1 -c "CREATE DATABASE zitadel OWNER nethub_admin;"
+              echo "Recreated database zitadel."

@@ -6,3 +6,4 @@ resources:
   - database-zitadel.yaml
   - job-grant-nethub-admin-createrole.yaml
   - job-drop-keycloak-db.yaml
+  - job-reset-zitadel-db.yaml
