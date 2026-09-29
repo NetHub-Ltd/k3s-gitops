@@ -5,54 +5,36 @@ Track each service as it moves. **Do not apply migrated services from nethub-clu
 | Service | Source (nethub-cluster) | Target (k3s-gitops) | Status | Notes |
 |---------|-------------------------|---------------------|--------|-------|
 | nethub-api | `values/fastapi.yaml` | `apps/nethub-api/` | done | GHCR + image automation |
-| keycloak | `nethub_stack/services/keycloak.yaml` | `apps/keycloak/` | done | |
-| **redis-shared** | `nethub_stack/services/redis.yaml` | `apps/redis-shared/` | **done** | **Adopt in place** — same STS/Service/PVC names. SOPS `redis-creds`. No extra Namespace. |
-| **cnpg / nethub-db-cluster** | `nethub_stack/database/database.yaml` (R2) | `apps/cnpg-nethub-db/` | **adopt PR** | **Adopt in place only.** Namespace `postgres`. PVC `nethub-db-cluster-1` 15Gi local-path. No bootstrap, no secret rotation, no operator move in PR1. MinIO manifest is obsolete — do not apply. |
-| mazeltov | `k3s/mazeltov/` | TBD | pending | Separate namespace |
+| **keycloak** | `nethub_stack/services/keycloak.yaml` | removed | **removed** | Hard-cut replaced by **Zitadel** on `auth.nethub.co.ke` |
+| **zitadel** | — | `apps/zitadel/` | **active** | ExternalDomain `auth.nethub.co.ke`; DB `zitadel` on CNPG |
+| **redis-shared** | `nethub_stack/services/redis.yaml` | `apps/redis-shared/` | **done** | Adopt in place |
+| **cnpg / nethub-db-cluster** | R2 live | `apps/cnpg-nethub-db/` | **done** | Adopt in place |
+| mazeltov | `k3s/mazeltov/` | TBD | pending | |
 | cloudflared / middlewares | `nethub_stack/services/*` | TBD | pending | |
-
-## Redis adopt notes
-
-- DNS unchanged: `redis-shared.nethub.svc.cluster.local:6379`
-- PVC claim template name must stay `redis-data` (volume `redis-data-redis-shared-0`)
-- First apply should match live spec to avoid unnecessary pod restart
-- Password is SOPS-encrypted; rotate later with a coordinated client update
-
-## CNPG adopt notes (nethub-db-cluster)
-
-- **Zero downtime / no data movement** — Flux adopts existing Cluster + Pooler; does not recreate PVC.
-- Namespace: `postgres` (not `nethub`). Do not create a second Namespace resource that fights live.
-- Cluster name: `nethub-db-cluster` — must not change.
-- PVC: `nethub-db-cluster-1` Bound 15Gi `local-path` — must not change size/class in PR1.
-- DNS unchanged:
-  - `nethub-db-cluster-rw.postgres.svc.cluster.local`
-  - `nethub-db-pooler.postgres.svc.cluster.local`
-- Backup: Cloudflare R2 via existing secret `backup-creds` in `postgres` (not managed in git in PR1).
-- Operator stays in `cnpg-system` unmanaged by this PR.
-- Do **not** apply `nethub_stack/full-database-manifest.yaml` (old MinIO design).
-- Do **not** add `bootstrap.initdb` in PR1 (cluster already has data on PVC).
-- Verify after Flux reconcile: phase healthy, same PVC volume, archiving/backup still OK.
-
-## Kustomize note (shared namespace)
-
-Only **one** `Namespace/nethub` under `apps/` (`apps/tawala-api/namespace.yaml`).
-
-## Keycloak image
-
-- Tracked in `apps/keycloak/deployment.yaml`
-- Bumped to `quay.io/keycloak/keycloak:26.7.3` (from 26.0)
-- Realm/clients/themes portability: prefer exported realm JSON + optional dedicated config repo (see PR notes)
-## Keycloak custom image
-
-- Source repo: `NetHub-Ltd/keycloak-config`
-- Image: `ghcr.io/nethub-ltd/keycloak` (themes + realm templates, base 26.7.3)
-- ImageRepository/Policy: `clusters/k3s/image-keycloak.yaml`
-- Deployment marker: `# {"$imagepolicy": "flux-system:keycloak"}`
 
 ## Shared credentials (DB + Redis apps)
 
-- **Secret** `nethub-db-app-creds` (ns `nethub`): shared `nethub_admin` password for nethub-api, tawala, keycloak.
-- **Secret** `nethub-redis-app-creds` (ns `nethub`): app-facing Redis URL; keep in sync with `redis-creds` `REDIS_PASSWORD` on the server.
-- Deployments override `envFrom` with explicit `env.secretKeyRef` so one SOPS edit rotates app DB auth.
-- Phase 1: same passwords as before (no rotation). Phase 2: `ALTER ROLE` + edit `apps/shared-secrets/db-creds.enc.yaml` + rollout restart.
-- Stale DB keys may still exist inside per-app `secret.enc.yaml`; explicit `env` wins. Remove them in a follow-up with `sops` when convenient.
+- **Secret** `nethub-db-app-creds` (ns `nethub`): shared `nethub_admin` for nethub-api, tawala (and was keycloak).
+- **Secret** `nethub-redis-app-creds` (ns `nethub`): app Redis URL.
+- **Secret** `zitadel-secrets`: Zitadel masterkey + first admin + Postgres env for Zitadel.
+
+## Zitadel hard-cut (dev)
+
+1. Keycloak Deployment/Ingress/Service removed from Flux.
+2. CNPG `Database` `zitadel` owned by `nethub_admin`.
+3. Job `drop-keycloak-db` drops Postgres database `keycloak` (FORCE).
+4. Ingress `auth.nethub.co.ke` + `asfalis.nethub.co.ke` → Zitadel.
+5. **NetHubKe / Tawala OIDC still pointed at Keycloak-shaped config** until app repos are updated — expect auth breakage until then.
+
+### Retrieve first admin password
+
+```bash
+sops -d apps/zitadel/secret.enc.yaml | grep FIRSTINSTANCE
+```
+
+Masterkey is immutable after first successful init — do not change `masterkey` in secret after Zitadel has written data.
+
+## CNPG adopt notes
+
+- Namespace `postgres`, cluster `nethub-db-cluster`, PVC 15Gi local-path.
+- DNS: `nethub-db-cluster-rw` / `nethub-db-pooler`.

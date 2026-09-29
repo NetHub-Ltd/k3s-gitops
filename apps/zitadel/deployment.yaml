@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zitadel
+  namespace: nethub
+  labels:
+    app: zitadel
+    app.kubernetes.io/name: zitadel
+    app.kubernetes.io/part-of: nethub
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zitadel
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: zitadel
+        app.kubernetes.io/name: zitadel
+    spec:
+      containers:
+        - name: zitadel
+          image: ghcr.io/zitadel/zitadel:v2.71.11
+          imagePullPolicy: IfNotPresent
+          args:
+            - start-from-init
+            - --masterkeyFromEnv
+          ports:
+            - name: http
+              containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: zitadel-config
+            - secretRef:
+                name: zitadel-secrets
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "512Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1536Mi"
+          readinessProbe:
+            httpGet:
+              path: /debug/ready
+              port: http
+              httpHeaders:
+                - name: Host
+                  value: auth.nethub.co.ke
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            failureThreshold: 12
+          livenessProbe:
+            httpGet:
+              path: /debug/healthz
+              port: http
+              httpHeaders:
+                - name: Host
+                  value: auth.nethub.co.ke
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            failureThreshold: 6

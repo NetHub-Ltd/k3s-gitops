@@ -1,0 +1,13 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: zitadel
+  namespace: postgres
+  labels:
+    app.kubernetes.io/name: zitadel
+    nethub.co.ke/purpose: zitadel-database
+spec:
+  name: zitadel
+  owner: nethub_admin
+  cluster:
+    name: nethub-db-cluster

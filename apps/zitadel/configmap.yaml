@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: zitadel-config
+  namespace: nethub
+  labels:
+    app.kubernetes.io/name: zitadel
+    app.kubernetes.io/part-of: nethub
+data:
+  ZITADEL_EXTERNALDOMAIN: "auth.nethub.co.ke"
+  ZITADEL_EXTERNALPORT: "443"
+  ZITADEL_EXTERNALSECURE: "true"
+  ZITADEL_TLS_ENABLED: "false"
+  ZITADEL_FIRSTINSTANCE_ORG_NAME: "NetHub"
+  ZITADEL_FIRSTINSTANCE_ORG_HUMAN_PASSWORDCHANGEREQUIRED: "true"

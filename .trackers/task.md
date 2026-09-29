@@ -1,12 +1,6 @@
-# Task: CNPG adopt in place (PR1)
-
-## In scope
-- [x] apps/cnpg-nethub-db Cluster + Pooler matching live export
-- [x] Wire apps/kustomization.yaml
-- [x] MIGRATION.md notes
-
-## Out of scope (later)
-- [ ] SOPS backup-creds
-- [ ] CNPG operator under Flux
-- [ ] bootstrap block / Database CRs
-- [ ] Secret rotation
+# Task: Zitadel hard-cut (dev)
+- [x] Remove apps/keycloak
+- [x] apps/zitadel on auth.nethub.co.ke
+- [x] Database CR zitadel
+- [x] Job drop keycloak database
+- [ ] Post-merge: verify zitadel ready, console login, then update NetHubKe OIDC

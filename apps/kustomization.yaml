@@ -3,7 +3,7 @@ kind: Kustomization
 resources:
   - shared-secrets
   - tawala-api
-  - keycloak
+  - zitadel
   - nethub-api
   - redis-shared
   - cnpg-nethub-db

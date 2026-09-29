@@ -3,7 +3,7 @@ kind: Kustomization
 namespace: nethub
 resources:
   - configmap.yaml
+  - secret.enc.yaml
   - deployment.yaml
   - service.yaml
   - ingress.yaml
-  - secret.enc.yaml

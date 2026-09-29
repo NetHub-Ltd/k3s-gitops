@@ -1,0 +1,49 @@
+# HARD CUT — drops Keycloak database. Idempotent (IF EXISTS).
+# Requires nethub-db-app-creds in namespace nethub (password key).
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: drop-keycloak-db
+  namespace: nethub
+  labels:
+    app.kubernetes.io/name: drop-keycloak-db
+    nethub.co.ke/hard-cut: "true"
+spec:
+  ttlSecondsAfterFinished: 86400
+  backoffLimit: 3
+  template:
+    metadata:
+      labels:
+        app: drop-keycloak-db
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: drop
+          image: postgres:16-alpine
+          env:
+            - name: PGHOST
+              value: nethub-db-cluster-rw.postgres.svc.cluster.local
+            - name: PGPORT
+              value: "5432"
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: nethub-db-app-creds
+                  key: username
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nethub-db-app-creds
+                  key: password
+            - name: PGDATABASE
+              value: postgres
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -e
+              echo "Terminating connections to keycloak (if any)..."
+              psql -v ON_ERROR_STOP=1 -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'keycloak' AND pid <> pg_backend_pid();" || true
+              echo "Dropping database keycloak..."
+              psql -v ON_ERROR_STOP=1 -c "DROP DATABASE IF EXISTS keycloak WITH (FORCE);"
+              echo "Done."
