@@ -4,4 +4,5 @@ resources:
   - cluster.yaml
   - pooler.yaml
   - database-zitadel.yaml
+  - job-grant-nethub-admin-createrole.yaml
   - job-drop-keycloak-db.yaml

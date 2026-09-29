@@ -1,0 +1,55 @@
+# One-shot: grant CREATEROLE/CREATEDB so Zitadel init can create roles.
+# Uses CNPG superuser secret (created when enableSuperuserAccess: true).
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: grant-nethub-admin-createrole
+  namespace: postgres
+  labels:
+    app.kubernetes.io/name: grant-nethub-admin-createrole
+    nethub.co.ke/purpose: zitadel-init
+spec:
+  ttlSecondsAfterFinished: 86400
+  backoffLimit: 6
+  template:
+    metadata:
+      labels:
+        app: grant-nethub-admin-createrole
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: grant
+          image: postgres:16-alpine
+          env:
+            - name: PGHOST
+              value: nethub-db-cluster-rw
+            - name: PGPORT
+              value: "5432"
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: nethub-db-cluster-superuser
+                  key: username
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nethub-db-cluster-superuser
+                  key: password
+            - name: PGDATABASE
+              value: postgres
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -e
+              echo "Waiting for superuser auth..."
+              for i in $(seq 1 30); do
+                if psql -c 'SELECT 1' >/dev/null 2>&1; then break; fi
+                sleep 2
+              done
+              echo "Granting CREATEROLE, CREATEDB to nethub_admin..."
+              psql -v ON_ERROR_STOP=1 <<'SQL'
+              ALTER ROLE nethub_admin WITH CREATEROLE CREATEDB LOGIN;
+              GRANT ALL PRIVILEGES ON DATABASE zitadel TO nethub_admin;
+              SQL
+              echo "Done. Zitadel init should succeed after pod restart."
