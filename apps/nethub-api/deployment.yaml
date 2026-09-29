@@ -40,6 +40,33 @@ spec:
           envFrom:
             - secretRef:
                 name: nethub-api-secrets
+          # Shared DB creds override envFrom (single rotation point)
+          env:
+            - name: FASTAPI_DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: nethub-db-app-creds
+                  key: host
+            - name: FASTAPI_DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: nethub-db-app-creds
+                  key: port
+            - name: FASTAPI_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: nethub-db-app-creds
+                  key: username
+            - name: FASTAPI_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nethub-db-app-creds
+                  key: password
+            - name: FASTAPI_DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: nethub-db-app-creds
+                  key: nethub_db_name
           livenessProbe:
             httpGet:
               path: /health

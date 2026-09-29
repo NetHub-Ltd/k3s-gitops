@@ -48,3 +48,11 @@ Only **one** `Namespace/nethub` under `apps/` (`apps/tawala-api/namespace.yaml`)
 - Image: `ghcr.io/nethub-ltd/keycloak` (themes + realm templates, base 26.7.3)
 - ImageRepository/Policy: `clusters/k3s/image-keycloak.yaml`
 - Deployment marker: `# {"$imagepolicy": "flux-system:keycloak"}`
+
+## Shared credentials (DB + Redis apps)
+
+- **Secret** `nethub-db-app-creds` (ns `nethub`): shared `nethub_admin` password for nethub-api, tawala, keycloak.
+- **Secret** `nethub-redis-app-creds` (ns `nethub`): app-facing Redis URL; keep in sync with `redis-creds` `REDIS_PASSWORD` on the server.
+- Deployments override `envFrom` with explicit `env.secretKeyRef` so one SOPS edit rotates app DB auth.
+- Phase 1: same passwords as before (no rotation). Phase 2: `ALTER ROLE` + edit `apps/shared-secrets/db-creds.enc.yaml` + rollout restart.
+- Stale DB keys may still exist inside per-app `secret.enc.yaml`; explicit `env` wins. Remove them in a follow-up with `sops` when convenient.

@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: nethub-redis-app-creds
+    namespace: nethub
+    labels:
+        app.kubernetes.io/name: nethub-redis-app-creds
+        app.kubernetes.io/part-of: nethub
+        nethub.co.ke/purpose: shared-redis-credentials
+type: Opaque
+stringData:
+    #ENC[AES256_GCM,data:BoW8wmuCaDzkB7AjscClc0rq2hugX8VBpCrGgem1UyN8ZaTXx8WbcYSd6ob/uogq2QwmlO0AzkK9Oe/9qaXqQEe5l/9rpk8=,iv:1n4EoehAZadAfK0xjXqwJ8V2a3d6Ceju6KpGF+GZd4M=,tag:CFs/SeITiq/kU9+c41q4xQ==,type:comment]
+    password: ENC[AES256_GCM,data:Vxctl7GYqkY9bFmcCKbXqz45z+jB96iuzeqt,iv:zkKDoQE31xdLwcuMGyvMFzoSCb55ovhnjOIVSt0NbPo=,tag:1dnUJIpzNwNvWYe5lxkbWg==,type:str]
+    #ENC[AES256_GCM,data:HfriIsiE+fghmSFyL6qFaXDm4mgXzYv5tjUylCRAVlJAPpsVXg==,iv:GNDQcaU92L1yCBIIkEgLqSvaFjRm+gyFIaRj5hpD05s=,tag:94qh3PkktwHYB8Z5lAarsw==,type:comment]
+    url: ENC[AES256_GCM,data:jCEyTPgRdneNluxJcyxgdizH22r8qb9huAz8Wb86PzS3eqvDghSEZzFbbu7sUfKi8JoELEmQCVeSgZPDK/c+s2QkEGUyYMp3AGKGScvwLJp5,iv:LFHjHk1lifV7t+kYwwS9h6XsAOG3Pl+pvNIfo01KTj0=,tag:rUoqKcwqT0LXEYawTY+w6w==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1wy58yxmfdehpfyzwkw3kvqfkv0ze65lyf6yuhe5xt5n6md0vhyssnqkf2t
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBPdlNOZEZjY0haODFHVzli
+            RW9qVVg5U0VEVjZrM1Y0a0NDTUttTmtQeERvCi9zZ1VOdnFzaFhEam1MbndkSEtT
+            UWZIM0hkRG5rNXJHQkFEQVR4eWsyamcKLS0tIDRBU2dPK1FrTVoxamJ6SlFXamNC
+            MWNaUFpMY1UrSjVyVTJqVTJCT2diblEKDnuDzQJVDYsicixMA9QzTiEg+TCz8LOh
+            RGGDaN3fOjloSY5Q9nfJr5mGd8julgQOXAHS97pATtub+gYh9N2rRQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2026-09-29T14:01:55Z"
+    mac: ENC[AES256_GCM,data:CwW23WhTkRljeTTrtjhFByflRVe61LxZmAewajzKPxH/K68yGab1xQOYLh/+9e0g9JCfbS0kAsPu91KTTvMSqaBJ93ynFtMPiquja3IpguFH+NawqyuaxFLWFiSS4f3rHxlqdI8/rnag5i1tX4HF93gPaOT6BkN/H9ivQh0a8Mk=,iv:sE6SyUZL+cIjH3ZiVqX7QRfjvrLHpuAL3Do7KPSojc4=,tag:YrgRLao8oi3AKC2EvPLwvg==,type:str]
+    pgp: []
+    encrypted_regex: ^(data|stringData)$
+    version: 3.9.4
