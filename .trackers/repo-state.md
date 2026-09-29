@@ -1,4 +1,4 @@
 # Repo state
-- Branch: feat/cnpg-adopt-nethub-db
+- Branch: feat/zitadel-hard-cut-replace-keycloak
 - Base: main
-- Change: Adopt live CNPG Cluster + Pooler into Flux (no downtime path)
+- Change: Remove Keycloak; install Zitadel on auth.nethub.co.ke; create zitadel DB; drop keycloak DB

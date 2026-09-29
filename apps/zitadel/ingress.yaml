@@ -1,14 +1,13 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: keycloak-ingress
+  name: zitadel-ingress
   namespace: nethub
   labels:
-    app.kubernetes.io/name: keycloak
+    app.kubernetes.io/name: zitadel
   annotations:
     kubernetes.io/ingress.className: traefik
     traefik.ingress.kubernetes.io/service.passhostheader: "true"
-    traefik.ingress.kubernetes.io/custom-response-headers: "Cache-Control: public, max-age=31536000"
 spec:
   rules:
     - host: auth.nethub.co.ke
@@ -18,7 +17,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: keycloak-service
+                name: zitadel
                 port:
                   number: 80
     - host: asfalis.nethub.co.ke
@@ -28,6 +27,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: keycloak-service
+                name: zitadel
                 port:
                   number: 80

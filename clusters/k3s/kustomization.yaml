@@ -6,5 +6,4 @@ resources:
   - apps.yaml
   - image-tawala-api.yaml
   - image-nethubke.yaml
-  - image-keycloak.yaml
   - image-automation.yaml

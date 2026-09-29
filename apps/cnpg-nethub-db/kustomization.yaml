@@ -3,3 +3,5 @@ kind: Kustomization
 resources:
   - cluster.yaml
   - pooler.yaml
+  - database-zitadel.yaml
+  - job-drop-keycloak-db.yaml
