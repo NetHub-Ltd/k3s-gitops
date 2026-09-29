@@ -1,5 +1,12 @@
-# Task: Migrate redis-shared (adopt in place)
+# Task: CNPG adopt in place (PR1)
 
-- apps/redis-shared StatefulSet+Service+SOPS secret
-- No duplicate Namespace
-- MIGRATION.md updated
+## In scope
+- [x] apps/cnpg-nethub-db Cluster + Pooler matching live export
+- [x] Wire apps/kustomization.yaml
+- [x] MIGRATION.md notes
+
+## Out of scope (later)
+- [ ] SOPS backup-creds
+- [ ] CNPG operator under Flux
+- [ ] bootstrap block / Database CRs
+- [ ] Secret rotation

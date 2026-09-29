@@ -5,3 +5,4 @@ resources:
   - keycloak
   - nethub-api
   - redis-shared
+  - cnpg-nethub-db
