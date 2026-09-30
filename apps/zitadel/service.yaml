@@ -6,6 +6,9 @@ metadata:
   labels:
     app: zitadel
     app.kubernetes.io/name: zitadel
+  annotations:
+    # Traefik must speak h2c to Zitadel for gRPC-Web / console API
+    traefik.ingress.kubernetes.io/service.serversscheme: h2c
 spec:
   type: ClusterIP
   selector:
@@ -13,4 +16,5 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: http
+      targetPort: 8080
+      appProtocol: http
