@@ -18,11 +18,11 @@ spec:
     metadata:
       annotations:
         nethub.co.ke/bootstrap: "davie-smtp-v3"
+        nethub.co.ke/cache: "redis-db10"
       labels:
         app: zitadel
         app.kubernetes.io/name: zitadel
     spec:
-      # K8s injects ZITADEL_PORT=tcp://x:80 which breaks ExternalPort uint parse
       enableServiceLinks: false
       containers:
         - name: zitadel
@@ -39,9 +39,15 @@ spec:
                 name: zitadel-config
             - secretRef:
                 name: zitadel-secrets
+          env:
+            - name: ZITADEL_CACHES_CONNECTORS_REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: zitadel-redis-cache
+                  key: url
           resources:
             requests:
-              cpu: "200m"
+              cpu: "300m"
               memory: "512Mi"
             limits:
               cpu: "1000m"

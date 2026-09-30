@@ -38,3 +38,13 @@ Masterkey is immutable after first successful init — do not change `masterkey`
 
 - Namespace `postgres`, cluster `nethub-db-cluster`, PVC 15Gi local-path.
 - DNS: `nethub-db-cluster-rw` / `nethub-db-pooler`.
+
+## Zitadel ops notes
+
+- Redis cache uses **DB index 10** only (`zitadel-redis-cache` secret). Do not point at DB 0 (Tawala/apps).
+- Traefik must use **h2c** to the Zitadel service (`serversscheme: h2c`) or console shows "Unknown Content-type received" on gRPC-Web calls.
+- CPU request: 300m.
+
+## IdP-agnostic NetHubKe (app work, not this repo)
+
+Prefer env names `OIDC_ISSUER`, `OIDC_CLIENT_ID`, `OIDC_CLIENT_SECRET`, `OIDC_JWKS_URL` (or discovery from issuer) instead of `KEYCLOAK_*`. Auth.js: generic OIDC provider, not `providers/keycloak`. Claim mapping adapter for roles — do not hardcode `realm_access` only.

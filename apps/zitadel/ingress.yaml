@@ -8,6 +8,7 @@ metadata:
   annotations:
     kubernetes.io/ingress.className: traefik
     traefik.ingress.kubernetes.io/service.passhostheader: "true"
+    traefik.ingress.kubernetes.io/service.serversscheme: h2c
 spec:
   rules:
     - host: auth.nethub.co.ke
