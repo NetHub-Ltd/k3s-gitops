@@ -29,10 +29,10 @@ spec:
               containerPort: 8000
           resources:
             limits:
-              cpu: "250m"
-              memory: "512Mi"
+              cpu: "200m"
+              memory: "384Mi"
             requests:
-              cpu: "100m"
+              cpu: "50m"
               memory: "128Mi"
           envFrom:
             - secretRef:

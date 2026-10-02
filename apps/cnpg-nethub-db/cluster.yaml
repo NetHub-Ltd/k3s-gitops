@@ -20,12 +20,13 @@ spec:
   imageName: ghcr.io/cloudnative-pg/postgresql:16
 
   resources:
+    # 3vCPU/8Gi: avoid competing with Zitadel for a full core
     requests:
       cpu: "200m"
-      memory: "1Gi"
+      memory: "768Mi"
     limits:
-      cpu: "1000m"
-      memory: "2Gi"
+      cpu: "700m"
+      memory: "1536Mi"
 
   storage:
     size: 15Gi
@@ -35,9 +36,10 @@ spec:
     parameters:
       archive_mode: "on"
       archive_timeout: "60s"
-      shared_buffers: "256MB"
-      wal_keep_size: "512MB"
-      work_mem: "16MB"
+      shared_buffers: "128MB"
+      wal_keep_size: "256MB"
+      work_mem: "8MB"
+      max_connections: "100"
 
   backup:
     barmanObjectStore:

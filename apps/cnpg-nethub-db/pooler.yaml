@@ -18,5 +18,6 @@ spec:
   pgbouncer:
     poolMode: transaction
     parameters:
-      max_client_conn: "1000"
-      default_pool_size: "25"
+      # Sized for single small VPS, not multi-app burst farm
+      max_client_conn: "200"
+      default_pool_size: "10"
