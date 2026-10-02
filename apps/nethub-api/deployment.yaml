@@ -40,7 +40,7 @@ spec:
           envFrom:
             - secretRef:
                 name: nethub-api-secrets
-          # Shared DB creds override envFrom (single rotation point)
+          # Shared DB + Redis override envFrom (single rotation point)
           env:
             - name: FASTAPI_DB_HOST
               valueFrom:
@@ -67,6 +67,11 @@ spec:
                 secretKeyRef:
                   name: nethub-db-app-creds
                   key: nethub_db_name
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: nethub-redis-app-creds
+                  key: url
           livenessProbe:
             httpGet:
               path: /health
