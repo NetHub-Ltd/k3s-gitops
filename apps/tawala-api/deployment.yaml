@@ -8,7 +8,7 @@ metadata:
     app.kubernetes.io/name: tawala-backend
     app.kubernetes.io/part-of: tawala
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: tawala-backend
