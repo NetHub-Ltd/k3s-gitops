@@ -46,12 +46,13 @@ spec:
                   name: zitadel-redis-cache
                   key: url
           resources:
+            # Tuned for 3vCPU/8Gi single-node: leave headroom for CNPG + k3s
             requests:
-              cpu: "300m"
+              cpu: "250m"
               memory: "512Mi"
             limits:
-              cpu: "1000m"
-              memory: "1536Mi"
+              cpu: "700m"
+              memory: "1024Mi"
           readinessProbe:
             httpGet:
               path: /debug/ready

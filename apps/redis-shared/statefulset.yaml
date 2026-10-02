@@ -28,7 +28,7 @@ spec:
             - --requirepass
             - $(REDIS_PASSWORD)
             - --maxmemory
-            - 768mb
+            - 256mb
             - --maxmemory-policy
             - allkeys-lru
             - --appendonly
@@ -45,12 +45,13 @@ spec:
             - name: redis
               containerPort: 6379
           resources:
+            # Shared cache on small VPS — cap memory hard; apps use LRU eviction
             requests:
-              cpu: "100m"
-              memory: "512Mi"
+              cpu: "50m"
+              memory: "128Mi"
             limits:
-              cpu: "500m"
-              memory: "1Gi"
+              cpu: "250m"
+              memory: "384Mi"
           volumeMounts:
             - name: redis-data
               mountPath: /data
