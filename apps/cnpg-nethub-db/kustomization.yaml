@@ -9,3 +9,4 @@ resources:
   - job-reset-zitadel-db.yaml
   - job-reset-zitadel-db-v2.yaml
   - job-reset-zitadel-db-v3.yaml
+  - job-reset-zitadel-db-v4.yaml
