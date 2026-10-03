@@ -38,10 +38,28 @@ spec:
               cpu: "50m"
               memory: "128Mi"
           envFrom:
+            - configMapRef:
+                name: nethub-api-config
             - secretRef:
                 name: nethub-api-secrets
-          # Shared DB + Redis override envFrom (single rotation point)
+          # Shared DB + Redis override envFrom (single rotation point).
+          # OIDC_* / AUDIENCE also set explicitly so they win over any KEYCLOAK_* in the secret.
           env:
+            - name: OIDC_ISSUER
+              valueFrom:
+                configMapKeyRef:
+                  name: nethub-api-config
+                  key: OIDC_ISSUER
+            - name: OIDC_JWKS_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: nethub-api-config
+                  key: OIDC_JWKS_URL
+            - name: AUDIENCE
+              valueFrom:
+                configMapKeyRef:
+                  name: nethub-api-config
+                  key: AUDIENCE
             - name: FASTAPI_DB_HOST
               valueFrom:
                 secretKeyRef:

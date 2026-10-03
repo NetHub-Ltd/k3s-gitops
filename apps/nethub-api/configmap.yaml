@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nethub-api-config
+  namespace: nethub
+  labels:
+    app.kubernetes.io/name: nethub-api
+    app.kubernetes.io/part-of: nethub
+data:
+  # Preferred IdP-agnostic vars (NetHubKe Settings: oidc_issuer / oidc_jwks_url / audience)
+  OIDC_ISSUER: "https://auth.nethub.co.ke"
+  OIDC_JWKS_URL: "https://auth.nethub.co.ke/oauth/v2/keys"
+  # Must match access-token aud from Zitadel API application
+  AUDIENCE: "nethub-api"
