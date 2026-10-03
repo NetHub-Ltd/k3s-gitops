@@ -17,7 +17,7 @@ spec:
   template:
     metadata:
       annotations:
-        nethub.co.ke/bootstrap: "force-clean-init-v4"
+        nethub.co.ke/bootstrap: "locked-start-from-setup"
         nethub.co.ke/cache: "redis-db10"
       labels:
         app: zitadel
@@ -29,7 +29,7 @@ spec:
           image: ghcr.io/zitadel/zitadel:v2.71.11
           imagePullPolicy: IfNotPresent
           args:
-            - start-from-init
+            - start-from-setup
             - --masterkeyFromEnv
           ports:
             - name: http
