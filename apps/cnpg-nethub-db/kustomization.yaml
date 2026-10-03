@@ -6,7 +6,6 @@ resources:
   - database-zitadel.yaml
   - job-grant-nethub-admin-createrole.yaml
   - job-drop-keycloak-db.yaml
-  - job-reset-zitadel-db.yaml
-  - job-reset-zitadel-db-v2.yaml
-  - job-reset-zitadel-db-v3.yaml
-  - job-reset-zitadel-db-v4.yaml
+  # reset-zitadel-db* Jobs intentionally NOT applied by Flux.
+  # They are destructive (DROP DATABASE). YAML files remain in this directory
+  # for rare manual use only: kubectl apply -f job-reset-zitadel-db-v4.yaml
