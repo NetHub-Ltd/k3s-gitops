@@ -1,4 +1,4 @@
 # Repo state
-- Branch: feat/netpay-flux
-- Base: dev (from origin/main)
-- Change: Add NetPay (pay.nethub.co.ke) to Flux — Deployment, Service, Ingress, SOPS secrets, CNPG Database, ImageRepository/Policy
+- Branch: fix/netpay-database-url
+- Base: dev (merged)
+- Change: Real DATABASE_URL in netpay-secrets (pooler + nethub_admin); shared Redis + startupProbe
