@@ -1,0 +1,31 @@
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageRepository
+metadata:
+  name: netpay
+  namespace: flux-system
+spec:
+  image: ghcr.io/nethub-ltd/netpay
+  interval: 5m
+  secretRef:
+    name: ghcr-credentials
+  exclusionList:
+    - "^.*\\.sig$"
+    - "^main$"
+    - "^latest$"
+    - "^sha-.*$"
+
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImagePolicy
+metadata:
+  name: netpay
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: netpay
+  policy:
+    semver:
+      # Bound to 1.1.x channel (current NetPay releases).
+      # When cutting 1.2.x / 2.x, update this range in the same change window.
+      range: ">=1.1.0 <1.2.0"

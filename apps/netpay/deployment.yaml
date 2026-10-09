@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: netpay
+  namespace: nethub
+  labels:
+    app: netpay
+    app.kubernetes.io/name: netpay
+    app.kubernetes.io/part-of: netpay
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: netpay
+  template:
+    metadata:
+      labels:
+        app: netpay
+        app.kubernetes.io/name: netpay
+    spec:
+      imagePullSecrets:
+        - name: ghcr-registry-key
+      containers:
+        - name: api
+          # Flux ImageUpdateAutomation updates this tag when a newer 1.1.x
+          # appears on ghcr.io/nethub-ltd/netpay (see clusters/k3s/image-netpay.yaml).
+          image: ghcr.io/nethub-ltd/netpay:1.1.10 # {"$imagepolicy": "flux-system:netpay"}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8000
+          resources:
+            limits:
+              cpu: "200m"
+              memory: "384Mi"
+            requests:
+              cpu: "50m"
+              memory: "128Mi"
+          envFrom:
+            - secretRef:
+                name: netpay-secrets
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 20
+            periodSeconds: 60
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 25
+            periodSeconds: 30

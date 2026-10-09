@@ -4,6 +4,7 @@ resources:
   - cluster.yaml
   - pooler.yaml
   - database-zitadel.yaml
+  - database-netpay.yaml
   - job-grant-nethub-admin-createrole.yaml
   - job-drop-keycloak-db.yaml
   # reset-zitadel-db* Jobs intentionally NOT applied by Flux.

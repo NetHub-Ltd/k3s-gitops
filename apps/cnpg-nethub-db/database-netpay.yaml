@@ -1,0 +1,13 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: netpay
+  namespace: postgres
+  labels:
+    app.kubernetes.io/name: netpay
+    nethub.co.ke/purpose: netpay-database
+spec:
+  name: netpay
+  owner: nethub_admin
+  cluster:
+    name: nethub-db-cluster
