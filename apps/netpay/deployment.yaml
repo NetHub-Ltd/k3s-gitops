@@ -18,6 +18,7 @@ spec:
         app: netpay
         app.kubernetes.io/name: netpay
     spec:
+      # Same cluster-local pull secret as tawala-api / nethub-api (not managed in this repo).
       imagePullSecrets:
         - name: ghcr-registry-key
       containers:
@@ -36,15 +37,19 @@ spec:
             requests:
               cpu: "50m"
               memory: "128Mi"
+          # App-specific secrets (SOPS) — same pattern as tawala-secrets / nethub-api-secrets
           envFrom:
             - secretRef:
                 name: netpay-secrets
+          # Shared Redis (single rotation point) — overrides any REDIS_URL in netpay-secrets
+          # NetPay only accepts DATABASE_URL (not discrete host/user/pass); that stays in netpay-secrets.
           env:
             - name: REDIS_URL
               valueFrom:
                 secretKeyRef:
                   name: nethub-redis-app-creds
                   key: url
+          # Alembic runs on startup; allow time before probes
           startupProbe:
             httpGet:
               path: /health
