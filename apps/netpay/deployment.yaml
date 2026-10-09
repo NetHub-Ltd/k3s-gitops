@@ -25,7 +25,7 @@ spec:
         - name: api
           # Flux ImageUpdateAutomation updates this tag when a newer 1.1.x
           # appears on ghcr.io/nethub-ltd/netpay (see clusters/k3s/image-netpay.yaml).
-          image: ghcr.io/nethub-ltd/netpay:v1.1.10 # {"$imagepolicy": "flux-system:netpay"}
+          image: ghcr.io/nethub-ltd/netpay:v1.1.11 # {"$imagepolicy": "flux-system:netpay"}
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
