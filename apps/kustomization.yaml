@@ -7,3 +7,4 @@ resources:
   - nethub-api
   - redis-shared
   - cnpg-nethub-db
+  - netpay
