@@ -1,5 +1,7 @@
-# Task: NetPay shared-secret wiring + crash fix
-- [x] Align deployment with tawala/nethub: envFrom netpay-secrets + REDIS_URL from nethub-redis-app-creds
-- [x] startupProbe for Alembic boot
-- [ ] Operator: sops-edit DATABASE_URL with real password from nethub-db-app-creds
-- [ ] Confirm pod /health after secret fix
+# Task: NetPay DATABASE_URL + shared Redis
+- [x] DATABASE_URL from shared creds (pooler host, db netpay)
+- [x] REDIS_URL from nethub-redis-app-creds
+- [x] startupProbe for Alembic
+- [x] Merge conflicts with dev (PR #48) resolved
+- [ ] Post-merge: verify pod /health
+- [ ] OIDC_CLIENT_ID still placeholder until Zitadel SPA client exists

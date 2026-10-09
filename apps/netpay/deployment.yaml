@@ -19,7 +19,6 @@ spec:
         app.kubernetes.io/name: netpay
     spec:
       # Same cluster-local pull secret as tawala-api / nethub-api (not managed in this repo).
-      # Secret type kubernetes.io/dockerconfigjson must exist in namespace nethub.
       imagePullSecrets:
         - name: ghcr-registry-key
       containers:

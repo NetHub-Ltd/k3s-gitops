@@ -1,4 +1,4 @@
 # Repo state
-- Branch: fix/netpay-shared-secrets
-- Base: main
-- Change: Wire NetPay REDIS from shared secret; longer probes; document DATABASE_URL operator step
+- Branch: fix/netpay-database-url
+- Base: dev (merged)
+- Change: Real DATABASE_URL in netpay-secrets (pooler + nethub_admin); shared Redis + startupProbe
