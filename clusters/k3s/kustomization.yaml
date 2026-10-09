@@ -6,4 +6,5 @@ resources:
   - apps.yaml
   - image-tawala-api.yaml
   - image-nethubke.yaml
+  - image-netpay.yaml
   - image-automation.yaml

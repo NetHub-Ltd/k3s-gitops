@@ -1,4 +1,5 @@
-# Rollback (limited after DROP DATABASE)
-1. Revert this PR on main — restores Keycloak manifests in git.
-2. Keycloak **database** is dropped by Job — restore from R2 barman backup if you need Keycloak data back.
-3. Zitadel masterkey must be preserved if keeping Zitadel data.
+# Rollback (NetPay Flux)
+1. Revert PR on dev/main — removes netpay from apps kustomization; Flux prunes Deployment/Service/Ingress.
+2. ImageRepository/Policy removed with cluster kustomization revert.
+3. CNPG Database `netpay` remains unless explicitly deleted (data-preserving default).
+4. To drop DB only after approval: delete Database CR `netpay` in namespace postgres.
