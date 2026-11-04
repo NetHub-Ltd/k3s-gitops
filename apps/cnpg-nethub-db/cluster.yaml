@@ -35,7 +35,7 @@ spec:
   postgresql:
     parameters:
       archive_mode: "on"
-      archive_timeout: "60s"
+      archive_timeout: "360m"
       shared_buffers: "128MB"
       wal_keep_size: "256MB"
       work_mem: "8MB"
