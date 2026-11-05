@@ -1,0 +1,20 @@
+# CNPG-managed database for NetHubKe application (Architecture A).
+# Name must match nethub-db-app-creds.nethub_db_name / FASTAPI_DB_NAME.
+# If the database already exists, CNPG reconciles ownership; the one-shot
+# reset Job is what empties schemas for a clean Alembic run.
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: nethub
+  namespace: postgres
+  labels:
+    app.kubernetes.io/name: nethub
+    nethub.co.ke/purpose: nethubke-application-database
+spec:
+  # Must match the logical DB name in nethub-db-app-creds.nethub_db_name.
+  # If your secret value differs (e.g. nethubke), change this `name` to match
+  # or update the secret — Job and app both read the secret key.
+  name: nethub
+  owner: nethub_admin
+  cluster:
+    name: nethub-db-cluster
