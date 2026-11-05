@@ -1,0 +1,79 @@
+# ONE-SHOT: drop and recreate the NetHubKe *application* database only.
+# Does NOT touch zitadel, netpay, or the CNPG cluster/PVC.
+#
+# DB name comes from shared secret nethub-db-app-creds.nethub_db_name
+# (same value wired to FASTAPI_DB_NAME on nethub-api).
+#
+# After successful migrate + /ready on nethub-api:
+#   1. Remove this file from kustomization.yaml resources
+#   2. Delete the Job object if it still exists
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: reset-nethub-app-db-v1
+  namespace: nethub
+  labels:
+    app.kubernetes.io/name: reset-nethub-app-db-v1
+    nethub.co.ke/purpose: nethubke-schema-clean-slate
+spec:
+  ttlSecondsAfterFinished: 86400
+  backoffLimit: 2
+  template:
+    metadata:
+      labels:
+        app: reset-nethub-app-db-v1
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: reset
+          image: postgres:16-alpine
+          env:
+            - name: PGHOST
+              value: nethub-db-cluster-rw.postgres.svc.cluster.local
+            - name: PGPORT
+              value: "5432"
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: nethub-db-app-creds
+                  key: username
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nethub-db-app-creds
+                  key: password
+            - name: PGDATABASE
+              value: postgres
+            - name: TARGET_DB
+              valueFrom:
+                secretKeyRef:
+                  name: nethub-db-app-creds
+                  key: nethub_db_name
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -eu
+              echo "NetHubKe app DB reset (v1)"
+              echo "TARGET_DB=${TARGET_DB}"
+
+              # Hard safety rails — never drop shared platform databases
+              case "${TARGET_DB}" in
+                ""|postgres|zitadel|netpay|template0|template1)
+                  echo "REFUSING: TARGET_DB='${TARGET_DB}' is not a safe NetHubKe app database name."
+                  exit 1
+                  ;;
+              esac
+
+              echo "Terminating connections to ${TARGET_DB}..."
+              psql -v ON_ERROR_STOP=1 -c \
+                "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '${TARGET_DB}' AND pid <> pg_backend_pid();" \
+                || true
+
+              echo "DROP DATABASE ${TARGET_DB}..."
+              psql -v ON_ERROR_STOP=1 -c "DROP DATABASE IF EXISTS \"${TARGET_DB}\" WITH (FORCE);"
+
+              echo "CREATE DATABASE ${TARGET_DB} OWNER nethub_admin..."
+              psql -v ON_ERROR_STOP=1 -c "CREATE DATABASE \"${TARGET_DB}\" OWNER nethub_admin;"
+
+              echo "Done. Next: roll nethub-api so Alembic migrates the empty database."

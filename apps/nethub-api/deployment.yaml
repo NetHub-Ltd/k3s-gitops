@@ -40,8 +40,10 @@ spec:
           envFrom:
             - secretRef:
                 name: nethub-api-secrets
-          # Shared DB + Redis (override envFrom). OIDC_* / AUDIENCE must live in
-          # nethub-api-secrets (SOPS only) — add with: sops apps/nethub-api/secret.enc.yaml
+            - configMapRef:
+                name: nethub-api-config
+          # Secrets: OIDC + AUDIENCE from nethub-api-secrets (SOPS).
+          # DB: shared nethub-db-app-creds (same cluster; FASTAPI_* names match app Settings).
           env:
             - name: OIDC_ISSUER
               valueFrom:
@@ -88,6 +90,7 @@ spec:
                 secretKeyRef:
                   name: nethub-redis-app-creds
                   key: url
+                  optional: true
           livenessProbe:
             httpGet:
               path: /health
@@ -96,7 +99,7 @@ spec:
             periodSeconds: 60
           readinessProbe:
             httpGet:
-              path: /health
+              path: /ready
               port: http
-            initialDelaySeconds: 30
-            periodSeconds: 30
+            initialDelaySeconds: 20
+            periodSeconds: 15

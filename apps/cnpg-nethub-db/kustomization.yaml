@@ -5,8 +5,10 @@ resources:
   - pooler.yaml
   - database-zitadel.yaml
   - database-netpay.yaml
+  - database-nethub.yaml
   - job-grant-nethub-admin-createrole.yaml
   - job-drop-keycloak-db.yaml
+  # ONE-SHOT Architecture A clean slate — remove after successful migrate
+  - job-reset-nethub-app-db-v1.yaml
   # reset-zitadel-db* Jobs intentionally NOT applied by Flux.
-  # They are destructive (DROP DATABASE). YAML files remain in this directory
-  # for rare manual use only: kubectl apply -f job-reset-zitadel-db-v4.yaml
+  # They are destructive; apply manually if needed.
