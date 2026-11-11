@@ -52,20 +52,20 @@ spec:
           # Alembic runs on startup; allow time before probes
           startupProbe:
             httpGet:
-              path: /health
+              path: /health/live
               port: http
             initialDelaySeconds: 10
             periodSeconds: 5
             failureThreshold: 30
           livenessProbe:
             httpGet:
-              path: /health
+              path: /health/live
               port: http
             initialDelaySeconds: 60
             periodSeconds: 60
           readinessProbe:
             httpGet:
-              path: /health
+              path: /health/ready
               port: http
             initialDelaySeconds: 40
             periodSeconds: 30
